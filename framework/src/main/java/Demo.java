@@ -14,11 +14,11 @@ import java.util.HashMap;
 public class Demo {
     public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException {
         try {
-            PlanBuilder planBuilder = new PlanBuilder();
+            PlanBuilder planBuilder = new PlanBuilder("test-web-case");
             // 设置udf路径   例如udfPath值是TestSmallWebCaseFunc.class的绝对路径
-            planBuilder.setPlatformUdfPath("java", "/Users/jason/Desktop/TestSmallWebCaseFunc.class");
+            planBuilder.setPlatformUdfPath("java", "/data/udfs/TestSmallWebCaseFunc.class");
             //供测试生成文件使用   例如udfPath值是TestSmallWebCaseFunc.class的绝对路径
-            planBuilder.setPlatformUdfPath("spark", "/Users/jason/Desktop/TestSmallWebCaseFunc.class");
+            planBuilder.setPlatformUdfPath("spark", "/data/udfs/TestSmallWebCaseFunc.class");
 
             // 创建节点   例如该map的value值是本项目test.csv的绝对路径
             DataQuanta sourceNode = planBuilder.readDataFrom(new HashMap<String, String>() {{

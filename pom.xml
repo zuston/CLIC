@@ -79,5 +79,7 @@
         <module>framework</module>
         <module>executable-operator</module>
         <module>backend-executor</module>
+        <module>clic-master</module>
+        <module>clic-shell</module>
     </modules>
 </project>

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+bin=`which $0`
+bin=`dirname ${bin}`
+bin=`cd "$bin"; pwd`
+
+
+function  print_usage() {
+  echo "Usage:"
+  echo "clic -command"
+  echo "where command is one of:"
+  echo "     -list            get task list"
+  echo "     -version         print the version"
+  echo ""
+}
+if [ $# = 0 ]; then
+  print_usage
+  exit
+fi
+
+command=$1
+shift
+case $command in
+  --help|-help|-h)
+    print_usage
+    exit
+    ;;
+esac
+#set CLASSPATH
+if [ -d "$CLIC_HOME/" ]; then
+  CLASSPATH=${CLASSPATH}:$CLIC_HOME/*
+else
+  echo  "Error: CLIC service is not found."
+fi
+
+#core command
+if [ "$command" = "-list" ]; then
+  CLASS=fdu.daslab.shellservice.ShellGetTaskList
+elif [ "$command" = "-version" ]; then
+  CLASS=fdu.daslab.shellservice.ShellGetVersionInfo
+else
+  echo $command - invalid command
+  print_usage
+  exit 1
+fi
+
+#some java parameters
+if [ "$JAVA_HOME" != "" ]; then
+  JAVA_HOME=$JAVA_HOME
+else
+  echo "Error: JAVA_HOME is not set."
+  exit 1
+fi
+
+#CLASSPATH务必保证可以找到命令所有的执行class path
+export CLASSPATH=$CLASSPATH
+
+exec "$JAVA" $CLASS "$@"
