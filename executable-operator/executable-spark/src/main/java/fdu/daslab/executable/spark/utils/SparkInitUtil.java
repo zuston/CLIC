@@ -16,9 +16,7 @@ public class SparkInitUtil {
 //    private static JavaSparkContext sparkContext =
 //            new JavaSparkContext(new SparkConf());
     private static JavaSparkContext sparkContext =
-            new JavaSparkContext(new SparkConf()
-                    .setAppName("Test")
-                    .setMaster("local"));
+            new JavaSparkContext(new SparkConf());
 
     /**
      *  初始化JavaSparkContext
