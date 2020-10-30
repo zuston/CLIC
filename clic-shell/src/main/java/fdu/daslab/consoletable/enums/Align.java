@@ -1,11 +1,9 @@
-package github.clyoudu.consoletable.enums;
+package fdu.daslab.consoletable.enums;
 
 /**
- * Create by IntelliJ IDEA
- * cell alignment
- * @author chenlei
- * @dateTime 2018/12/11 9:53
- * @description Align
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public enum Align {
 

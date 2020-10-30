@@ -1,11 +1,14 @@
 package fdu.daslab.shellservice;
 
 import fdu.daslab.client.TaskServiceClient;
+import fdu.daslab.consoletable.ConsoleTable;
+import fdu.daslab.consoletable.table.Cell;
 import fdu.daslab.utils.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,8 +21,6 @@ public class ShellGetTaskList {
 
     private static String masterHost;
     private static Integer masterPort;
-    private static Configuration configuration;
-    private static Logger logger = LoggerFactory.getLogger(ShellGetTaskList.class);
 
     public static void main(String[] args) {
         int size = args.length;
@@ -28,8 +29,16 @@ public class ShellGetTaskList {
         masterPort = Integer.parseInt(args[size-1]);
         TaskServiceClient taskServiceClient = new TaskServiceClient(masterHost, masterPort);
         List<String> allTaskList = taskServiceClient.getTaskList();
-
-        System.out.format("%-17s%-17s%-17s%-17s%-17s%-17s\n","PlanName","StageIdList","SubmitTime","StartTime","CompleteTime","TaskStatus");
+        List<Cell> header = new ArrayList<Cell>(){{
+            add(new Cell("PlanName"));
+            add(new Cell("StageIdList"));
+            add(new Cell("SubmitTime"));
+            add(new Cell("StartTime"));
+            add(new Cell("CompleteTime"));
+            add(new Cell("TaskStatus"));
+        }};
+        List<List<Cell>> body = new ArrayList<List<Cell>>();
+        List<Cell> row = new ArrayList<Cell>();
         //如果列表为空
         if (allTaskList.isEmpty()) {
             System.out.println();
@@ -37,17 +46,18 @@ public class ShellGetTaskList {
             List<List<String>> taskListInfo = parseTaskList(allTaskList);
             taskListInfo.forEach(task->{
                 task.forEach(info->{
-                    System.out.format("%-17s",info);
+                    row.add(new Cell(info));
                 });
-                System.out.format("\n");
+               body.add(row);
             });
         }
+        new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).build().print();
     }
 
     public static List<List<String>> parseTaskList(List<String> taskList) {
-        List<List<String>> taskListInfo = null;
+        List<List<String>> taskListInfo = new ArrayList<>();
         taskList.forEach(task-> {
-               String[] info = task.split("-");
+               String[] info = task.split("&");
                taskListInfo.add(Arrays.asList(info));
         });
         return taskListInfo;

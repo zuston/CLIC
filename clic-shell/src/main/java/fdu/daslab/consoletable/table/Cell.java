@@ -1,13 +1,11 @@
-package github.clyoudu.consoletable.table;
+package fdu.daslab.consoletable.table;
 
-import github.clyoudu.consoletable.enums.Align;
+import fdu.daslab.consoletable.enums.Align;
 
 /**
- * Create by IntelliJ IDEA
- * table cell
- * @author chenlei
- * @dateTime 2018/12/11 9:52
- * @description Cell
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public class Cell {
 

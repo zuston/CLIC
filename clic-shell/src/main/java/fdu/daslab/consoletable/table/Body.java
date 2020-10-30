@@ -1,16 +1,14 @@
-package github.clyoudu.consoletable.table;
+package fdu.daslab.consoletable.table;
 
-import github.clyoudu.consoletable.util.PrintUtil;
+import fdu.daslab.consoletable.util.PrintUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Create by IntelliJ IDEA
- * table body
- * @author chenlei
- * @dateTime 2018/12/11 14:04
- * @description Body
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public class Body {
 
@@ -38,7 +36,7 @@ public class Body {
      * @param horizontalSep char of h-sep, default '-'
      * @param verticalSep char of v-sep, default '|'
      * @param joinSep char of corner, default '+'
-     * @return like:
+     * @return result:
      * +------------+--------------+------------+
      * | one        | two          | three      |
      * +------------+--------------+------------+

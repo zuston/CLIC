@@ -1,22 +1,19 @@
-package github.clyoudu.consoletable;
+package fdu.daslab.consoletable;
 
-import github.clyoudu.consoletable.enums.Align;
-import github.clyoudu.consoletable.enums.NullPolicy;
-import github.clyoudu.consoletable.table.Body;
-import github.clyoudu.consoletable.table.Cell;
-import github.clyoudu.consoletable.table.Header;
-import github.clyoudu.consoletable.util.StringPadUtil;
+import fdu.daslab.consoletable.enums.NullPolicy;
+import fdu.daslab.consoletable.table.Body;
+import fdu.daslab.consoletable.table.Cell;
+import fdu.daslab.consoletable.table.Header;
+import fdu.daslab.consoletable.util.StringPadUtil;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Create by IntelliJ IDEA
- * console table
- * @author chenlei
- * @dateTime 2018/12/11 9:28
- * @description ConsoleTable
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public class ConsoleTable {
 
@@ -32,7 +29,7 @@ public class ConsoleTable {
 
     private ConsoleTable(){}
 
-    void print() {
+    public void print() {
         System.out.println(getContent());
     }
 
@@ -141,75 +138,5 @@ public class ConsoleTable {
             }
             return consoleTable;
         }
-    }
-
-    public static void main(String[] args){
-        List<Cell> header = new ArrayList<Cell>(){{
-            add(new Cell("name"));
-            add(new Cell("email"));
-            add(new Cell("tel"));
-        }};
-        List<List<Cell>> body = new ArrayList<List<Cell>>(){{
-            add(new ArrayList<Cell>(){{
-                add(new Cell("kat"));
-                add(new Cell(Align.CENTER,"kat@gimal.com"));
-                add(new Cell(Align.RIGHT,"54321"));
-            }});
-            add(new ArrayList<Cell>(){{
-                add(new Cell("ashe"));
-                add(new Cell("ashe_111@hotmail.com"));
-                add(new Cell("9876543中文测试210"));
-            }});
-            add(new ArrayList<Cell>(){{
-                add(null);
-                add(new Cell(null));
-                add(new Cell(Align.LEFT,"11"));
-            }});
-        }};
-        //default
-        new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).build().print();
-
-        //中文
-        header = new ArrayList<Cell>(){{
-            add(new Cell("姓名name"));
-            add(new Cell("电子邮箱email"));
-            add(new Cell("电话号码tel"));
-        }};
-        body = new ArrayList<List<Cell>>(){{
-            add(new ArrayList<Cell>(){{
-                add(new Cell("凯特kat"));
-                add(new Cell(Align.CENTER,"kat@gimal.com"));
-                add(new Cell(Align.RIGHT,"54321"));
-            }});
-            add(new ArrayList<Cell>(){{
-                add(new Cell("艾希ashe"));
-                add(new Cell("ashe_111@hotmail.com"));
-                add(new Cell("9876543210"));
-            }});
-            add(new ArrayList<Cell>(){{
-                add(new Cell("這是一串很長的繁體中文"));
-                add(new Cell("これは長い日本語です"));
-                add(new Cell(Align.LEFT,"11这是一串很长的中文"));
-            }});
-        }};
-        new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).build().print();
-
-        //no header
-        //new ConsoleTable.ConsoleTableBuilder().addRows(body).build().print();
-
-        //restrict
-        //header.add(new Cell("not restrict"));
-        //new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).restrict(false).build().print();
-        //new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).restrict(true).build().print();
-
-        //"null"
-        //new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).nullPolicy(NullPolicy.NULL_STRING).build().print();
-        //new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).nullPolicy(NullPolicy.THROW).build().print();
-
-        //line sep
-        //new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).lineSep("\n\n").build().print();
-
-        //vertical sep & horizontal sep & join sep
-        //new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).verticalSep("*").horizontalSep("*").joinSep("*").build().print();
     }
 }

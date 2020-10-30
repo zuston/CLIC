@@ -1,14 +1,11 @@
-package github.clyoudu.consoletable.util;
+package fdu.daslab.consoletable.util;
 
 import java.nio.charset.Charset;
 
 /**
- * Created by IntelliJ IDEA
- *
- * @author chenlei
- * @date 2019/4/16
- * @time 21:04
- * @desc StringPadUtil
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public class StringPadUtil {
 

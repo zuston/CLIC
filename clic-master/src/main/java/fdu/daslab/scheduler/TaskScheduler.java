@@ -73,8 +73,8 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
             if (task.getTaskStatus() != TaskStatus.COMPLETED) {
                 updateTask(task);
             }
-            printData.add(task.getPlanName() + "-" + task.getStageIdList().toString() + "-" + task.getSubmitTime()+ "-" + task.getStartTime()
-                    + "-" + task.getCompleteTime() + "-" + task.getTaskStatus());
+            printData.add(task.getPlanName() + "&" + task.getStageIdList().toString() + "&" + task.getSubmitTime()+ "&" + task.getStartTime()
+                    + "&" + task.getCompleteTime() + "&" + task.getTaskStatus());
             // TODO: others
         });
         return printData;

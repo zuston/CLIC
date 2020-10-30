@@ -4,13 +4,14 @@ bin=`which $0`
 bin=`dirname ${bin}`
 bin=`cd "$bin"; pwd`
 
-
+echo ""
 function  print_usage() {
   echo "Usage:"
   echo "clic -command"
   echo "where command is one of:"
-  echo "     -list            get task list"
+  echo "     -list_task           get task list"
   echo "     -version         print the version"
+  echo "     -help               show the usage"
   echo ""
 }
 if [ $# = 0 ]; then
@@ -28,14 +29,14 @@ case $command in
 esac
 #set CLASSPATH and get conf
 if [ -d "$CLIC_HOME/" ]; then
-  CLASSPATH=${CLASSPATH}:$CLIC_HOME/*
-  config="$CLIC_HOME/conf/master-info.properties"
-  .$config
-elif [ -d "/data/jars/" ]; then
-  CLASSPATH=${CLASSPATH}:/data/jars/*
+  PATH=$CLIC_HOME/jars
+  config="/data/conf/master-info.config"
+  . $config
+elif [ -d "/data/jars" ]; then
+  PATH=/data/jars
   if [ -f "/data/conf/master-info.properties" ]; then
-       config="/data/conf/master-info.properties"
-       .$config
+       config="/data/conf/master-info.config"
+       . $config
   else
      echo  "Error: CLIC config is not found."
   fi
@@ -43,15 +44,17 @@ else
   echo  "Error: CLIC service is not found."
 fi
 #set master ip&port
-master_host="${clic-master-ip}"
-master_port="${clic-master-port}"
+master_host="${ip}"
+master_port="${port}"
 
 
 #core command
-if [ "$command" = "-list" ]; then
+if [ "$command" = "-list_task" ]; then
   CLASS=fdu.daslab.shellservice.ShellGetTaskList
+  PATH=$PATH/"clic-shell-test.jar"
 elif [ "$command" = "-version" ]; then
   CLASS=fdu.daslab.shellservice.ShellGetVersionInfo
+  PATH=$PATH/"clic-shell-test.jar"
 else
   echo $command - invalid command
   print_usage
@@ -60,13 +63,10 @@ fi
 
 #some java parameters
 if [ "$JAVA_HOME" != "" ]; then
-  JAVAE=$JAVA_HOME/bin/
+  JAVA=$JAVA_HOME/bin/java
 else
   echo "Error: JAVA_HOME is not set."
   exit 1
 fi
-
-#CLASSPATH务必保证可以找到命令所有的执行class path
-export CLASSPATH=$CLASSPATH
-
-exec "$JAVA" $CLASS "$@" $master_host $master_port
+JAVA_HEAP_MAX=-Xmx1000m
+eval exec "$JAVA" $JAVA_HEAP_MAX  -classpath $PATH $CLASS "$@" $master_host $master_port

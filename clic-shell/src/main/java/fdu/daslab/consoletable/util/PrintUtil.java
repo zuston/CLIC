@@ -1,18 +1,13 @@
-package github.clyoudu.consoletable.util;
-
-import github.clyoudu.consoletable.enums.Align;
-import github.clyoudu.consoletable.table.Cell;
-
+package fdu.daslab.consoletable.util;
+import fdu.daslab.consoletable.enums.Align;
+import fdu.daslab.consoletable.table.Cell;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 /**
- * Create by IntelliJ IDEA
- * tools for print lines
- * @author chenlei
- * @dateTime 2018/12/14 9:40
- * @description PrintUtil
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public class PrintUtil {
 

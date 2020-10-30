@@ -1,13 +1,10 @@
-package github.clyoudu.consoletable.enums;
+package fdu.daslab.consoletable.enums;
 
-import github.clyoudu.consoletable.table.Cell;
-
+import fdu.daslab.consoletable.table.Cell;
 /**
- * Create by IntelliJ IDEA
- * do what when cell is null or cell value is null
- * @author chenlei
- * @dateTime 2018/12/14 11:44
- * @description NullPolicy
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public enum NullPolicy {
 

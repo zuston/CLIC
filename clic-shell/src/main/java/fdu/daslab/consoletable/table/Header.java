@@ -1,17 +1,15 @@
-package github.clyoudu.consoletable.table;
+package fdu.daslab.consoletable.table;
 
-import github.clyoudu.consoletable.util.PrintUtil;
+import fdu.daslab.consoletable.util.PrintUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Create by IntelliJ IDEA
- * table header
- * @author chenlei
- * @dateTime 2018/12/11 14:02
- * @description Header
+ * @author Du Qinghua
+ * @version 1.0
+ * @since 2020/10/22 18:14
  */
 public class Header {
 
