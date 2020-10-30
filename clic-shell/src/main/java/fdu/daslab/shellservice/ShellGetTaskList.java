@@ -16,26 +16,22 @@ import java.util.List;
  */
 public class ShellGetTaskList {
 
-    private static String driverHost;
-    private static Integer driverPort;
+    private static String masterHost;
+    private static Integer masterPort;
     private static Configuration configuration;
     private static Logger logger = LoggerFactory.getLogger(ShellGetTaskList.class);
 
     public static void main(String[] args) {
-        try {
-            configuration = new Configuration();
-            driverHost = configuration.getProperty("clic-master-ip");
-            driverPort = Integer.parseInt(configuration.getProperty("clic-master-port"));
-        } catch (FileNotFoundException e) {
-            logger.error("An Error occur when shell get CLIC master info from configuration file");
-            e.fillInStackTrace();
-        }
-
-        TaskServiceClient taskServiceClient = new TaskServiceClient(driverHost, driverPort);
+        int size = args.length;
+        //取最后两个参数作为ip和port
+        masterHost = args[size-2];
+        masterPort = Integer.parseInt(args[size-1]);
+        TaskServiceClient taskServiceClient = new TaskServiceClient(masterHost, masterPort);
         List<String> allTaskList = taskServiceClient.getTaskList();
+
         System.out.format("%-17s%-17s%-17s%-17s%-17s%-17s\n","PlanName","StageIdList","SubmitTime","StartTime","CompleteTime","TaskStatus");
         //如果列表为空
-        if (allTaskList.isEmpty()){
+        if (allTaskList.isEmpty()) {
             System.out.println();
         }else {
             List<List<String>> taskListInfo = parseTaskList(allTaskList);
@@ -48,9 +44,9 @@ public class ShellGetTaskList {
         }
     }
 
-    public static List<List<String>> parseTaskList(List<String> taskList){
+    public static List<List<String>> parseTaskList(List<String> taskList) {
         List<List<String>> taskListInfo = null;
-        taskList.forEach(task->{
+        taskList.forEach(task-> {
                String[] info = task.split("-");
                taskListInfo.add(Arrays.asList(info));
         });

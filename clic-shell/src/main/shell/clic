@@ -26,12 +26,26 @@ case $command in
     exit
     ;;
 esac
-#set CLASSPATH
+#set CLASSPATH and get conf
 if [ -d "$CLIC_HOME/" ]; then
   CLASSPATH=${CLASSPATH}:$CLIC_HOME/*
+  config="$CLIC_HOME/conf/master-info.properties"
+  .$config
+elif [ -d "/data/jars/" ]; then
+  CLASSPATH=${CLASSPATH}:/data/jars/*
+  if [ -f "/data/conf/master-info.properties" ]; then
+       config="/data/conf/master-info.properties"
+       .$config
+  else
+     echo  "Error: CLIC config is not found."
+  fi
 else
   echo  "Error: CLIC service is not found."
 fi
+#set master ip&port
+master_host="${clic-master-ip}"
+master_port="${clic-master-port}"
+
 
 #core command
 if [ "$command" = "-list" ]; then
@@ -46,7 +60,7 @@ fi
 
 #some java parameters
 if [ "$JAVA_HOME" != "" ]; then
-  JAVA_HOME=$JAVA_HOME
+  JAVAE=$JAVA_HOME/bin/
 else
   echo "Error: JAVA_HOME is not set."
   exit 1
@@ -55,4 +69,4 @@ fi
 #CLASSPATH务必保证可以找到命令所有的执行class path
 export CLASSPATH=$CLASSPATH
 
-exec "$JAVA" $CLASS "$@"
+exec "$JAVA" $CLASS "$@" $master_host $master_port
