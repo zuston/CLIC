@@ -1,11 +1,11 @@
 package fdu.daslab.scheduler;
 
-import fdu.daslab.backend.executor.utils.KubernetesUtil;
+import fdu.daslab.kubernetes.KubernetesUtil;
 import fdu.daslab.scheduler.event.SchedulerEvent;
 import fdu.daslab.scheduler.event.StageCompletedEvent;
 import fdu.daslab.scheduler.event.StageDataPreparedEvent;
 import fdu.daslab.scheduler.event.StageStartedEvent;
-import fdu.daslab.backend.executor.model.KubernetesStage;
+import fdu.daslab.kubernetes.KubernetesStage;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

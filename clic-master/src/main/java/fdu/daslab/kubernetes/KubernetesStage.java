@@ -1,4 +1,4 @@
-package fdu.daslab.backend.executor.model;
+package fdu.daslab.kubernetes;
 
 import io.kubernetes.client.openapi.models.V1Job;
 

@@ -1,12 +1,12 @@
 package fdu.daslab;
 
-import fdu.daslab.backend.executor.utils.Configuration;
 import fdu.daslab.scheduler.CLICScheduler;
 import fdu.daslab.scheduler.TaskScheduler;
 import fdu.daslab.service.impl.SchedulerServiceImpl;
 import fdu.daslab.service.impl.TaskServiceImpl;
 import fdu.daslab.thrift.master.SchedulerService;
 import fdu.daslab.thrift.master.TaskService;
+import fdu.daslab.util.Configuration;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;

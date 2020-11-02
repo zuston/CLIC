@@ -30,7 +30,7 @@ public class Task {
     public Task(String planName, List<String> stageList) {
         this.planName = planName;
         this.stageIdList = stageList;
-        this.startTime = new Date();
+        this.submitTime = new Date();
         this.taskStatus = TaskStatus.NEW;
     }
 
