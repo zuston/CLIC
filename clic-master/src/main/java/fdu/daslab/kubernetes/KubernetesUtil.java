@@ -1,7 +1,7 @@
-package fdu.daslab.backend.executor.utils;
+package fdu.daslab.kubernetes;
 
 import com.google.common.collect.ImmutableMap;
-import fdu.daslab.backend.executor.model.KubernetesStage;
+import fdu.daslab.util.Configuration;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.BatchV1Api;

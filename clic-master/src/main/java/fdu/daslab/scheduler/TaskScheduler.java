@@ -1,7 +1,7 @@
 package fdu.daslab.scheduler;
 
-import fdu.daslab.backend.executor.model.KubernetesStage;
-import fdu.daslab.backend.executor.utils.KubernetesUtil;
+import fdu.daslab.kubernetes.KubernetesStage;
+import fdu.daslab.kubernetes.KubernetesUtil;
 import fdu.daslab.scheduler.event.TaskEvent;
 import fdu.daslab.scheduler.event.TaskSubmitEvent;
 import fdu.daslab.scheduler.model.Task;
