@@ -5,7 +5,6 @@ import fdu.daslab.util.Configuration;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.BatchV1Api;
-import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.ClientBuilder;
 import io.kubernetes.client.util.KubeConfig;
@@ -25,7 +24,7 @@ import java.util.*;
 public class KubernetesUtil {
 
     private static String kubeConfigPath; // kubernetes配置地址
-    private static String masterIP; // master的ip，需要查询获得
+    private static String masterIP; // master的ip
     private static String masterThriftPort; // master启动的thrift端口
     private static String defaultNamespaceName; // 默认的namespace名称
 
@@ -37,27 +36,27 @@ public class KubernetesUtil {
             defaultNamespaceName = configuration.getProperty("default-namespace-name");
             // 初始化k8s
             initKubernetes();
-            // 查询获取pod-ip
-            String masterPodName = configuration.getProperty("clic-master-pod-name"); // master的pod名称
-            masterIP = readMasterIP(masterPodName);
+            // 不需要查询，将master部署成一个svc，内部的pod都可以通过host name进行访问
+//            // 查询获取pod-ip
+//            String masterPodName = configuration.getProperty("clic-master-pod-name"); // master的pod名称
+            masterIP = configuration.getProperty("clic-master-ip");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    // TODO: 未来状态保存到外部之后，master做一个无状态的服务
-    // 查询获取pod-ip
-    private static String readMasterIP(String masterPodName) {
-        try {
-            CoreV1Api api = new CoreV1Api();
-            // 查询获取pod-ip
-            V1Pod masterPod = api.readNamespacedPodStatus(masterPodName, defaultNamespaceName, null);
-            return Objects.requireNonNull(masterPod.getStatus()).getPodIP();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-        return "localhost";
-    }
+//    // 查询获取pod-ip
+//    private static String readMasterIP(String masterPodName) {
+//        try {
+//            CoreV1Api api = new CoreV1Api();
+//            // 查询获取pod-ip
+//            V1Pod masterPod = api.readNamespacedPodStatus(masterPodName, defaultNamespaceName, null);
+//            return Objects.requireNonNull(masterPod.getStatus()).getPodIP();
+//        } catch (ApiException e) {
+//            e.printStackTrace();
+//        }
+//        return "localhost";
+//    }
 
     // 初始化kubernetes
     public static void initKubernetes() {
