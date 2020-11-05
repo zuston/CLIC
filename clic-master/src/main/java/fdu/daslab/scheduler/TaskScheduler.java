@@ -25,7 +25,7 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
     private CLICScheduler clicScheduler;
     private static Logger logger = LoggerFactory.getLogger(TaskScheduler.class);
 
-    // 保存当前的所有plan
+    // TODO: 保存当前的所有plan，启动的时候会从etcd中加载进来
     private Map<String, Task> taskList = new HashMap<>();
 
     public TaskScheduler(CLICScheduler clicScheduler) {
@@ -64,23 +64,6 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
     }
 
     /**
-     * 查看所有任务的状态
-     */
-    public List<String> handlerListAllEvent() {
-        // 对于每一个任务，如果没有完成，则查看是否所有的stage都完成了，并更新状态
-        List<String> printData = new ArrayList<>();
-        taskList.forEach((planName, task) -> {
-            if (task.getTaskStatus() != TaskStatus.COMPLETED) {
-                updateTask(task);
-            }
-            printData.add(task.getPlanName() + "&" + task.getStageIdList().toString() + "&" + task.getSubmitTime()+ "&" + task.getStartTime()
-                    + "&" + task.getCompleteTime() + "&" + task.getTaskStatus());
-            // TODO: others
-        });
-        return printData;
-    }
-
-    /**
      * task的状态是惰性更新的，开始时间取决于最先开始的stage的时间，结束时间取决于最后结束的stage的时间
      *
      * @param task task
@@ -116,4 +99,36 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
             task.setTaskStatus(TaskStatus.RUNNING);
         }
     }
+
+    /*================以下接口是暴露给用户以方便用户查询内部状态信息=====================*/
+
+    /**
+     * 查看所有任务的状态
+     */
+    public List<Task> handlerListAllEvent() {
+        // 对于每一个任务，如果没有完成，则查看是否所有的stage都完成了，并更新状态
+        List<Task> taskData = new ArrayList<>();
+        taskList.forEach((planName, task) -> {
+            if (task.getTaskStatus() != TaskStatus.COMPLETED) {
+                updateTask(task);
+            }
+            taskData.add(task);
+        });
+        return taskData;
+    }
+
+    /**
+     * 查看某个task的详细信息
+     */
+    public Task getTaskByTaskName(String taskName) {
+        return taskList.get(taskName);
+    }
+
+    /**
+     * 查看某个stage的详细信息
+     */
+    public KubernetesStage getStageInfoByStageId(String stageId) {
+        return clicScheduler.getStageInfo(stageId);
+    }
+    
 }

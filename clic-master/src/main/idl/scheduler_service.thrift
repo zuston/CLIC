@@ -21,5 +21,12 @@ service TaskService {
     void submitPlan(1: string planName, 2: string planDagPath);
 
     // 查看所有任务的状态
-    list<string> listAllTask();
+    list<map<string, string>> listAllTask();
+    // 具体task的信息
+    map<string, string> getTaskInfo(1: string planName);
+    // 具体stage的信息
+    map<string, string> getStageInfo(1: string stageId);
+    // 获取task所有stage的id
+    list<string> getStageIdOfTask(1: string planName);
+
 }

@@ -3,9 +3,13 @@ package fdu.daslab.shellservice;
 import fdu.daslab.client.TaskServiceClient;
 import fdu.daslab.consoletable.ConsoleTable;
 import fdu.daslab.consoletable.table.Cell;
+import fdu.daslab.utils.FieldName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 获取所有task的list
@@ -14,47 +18,49 @@ import java.util.List;
  * @since 2020/10/22 18:14
  */
 public class ShellGetTaskList {
-
-    private static String masterHost;
-    private static Integer masterPort;
-
+    private static  Logger logger = LoggerFactory.getLogger(ShellGetTaskList.class);
     public static void main(String[] args) {
         int size = args.length;
         //取最后两个参数作为ip和port
-        masterHost = args[size-2];
-        masterPort = Integer.parseInt(args[size-1]);
+        String masterHost = args[size - 2];
+        Integer masterPort = Integer.parseInt(args[size - 1]);
         TaskServiceClient taskServiceClient = new TaskServiceClient(masterHost, masterPort);
-        List<String> allTaskList = taskServiceClient.getTaskList();
-        List<Cell> header = new ArrayList<Cell>(){{
-            add(new Cell("PlanName"));
-            add(new Cell("StageIdList"));
-            add(new Cell("SubmitTime"));
-            add(new Cell("StartTime"));
-            add(new Cell("CompleteTime"));
-            add(new Cell("TaskStatus"));
+        List<Map<String, String>> allTaskList = taskServiceClient.getTaskList();
+
+        List<Cell> header = new ArrayList<Cell>() { {
+            add(new Cell(FieldName.TASK_PLAN_NAME));
+            add(new Cell(FieldName.TASK_SUBMIT_TIME));
+            add(new Cell(FieldName.TASK_START_TIME));
+            add(new Cell(FieldName.TASK_COMPLETE_TIME));
+            add(new Cell(FieldName.TASK_STATUS));
         }};
         List<List<Cell>> body = new ArrayList<List<Cell>>();
         List<Cell> row = new ArrayList<Cell>();
-        //如果列表为空
-        if (allTaskList.isEmpty()) {
-            System.out.println();
-        }else {
+        //如果列表不为空
+        if (!allTaskList.isEmpty()) {
             List<List<String>> taskListInfo = parseTaskList(allTaskList);
-            taskListInfo.forEach(task->{
-                task.forEach(info->{
+            taskListInfo.forEach(task -> {
+                task.forEach(info -> {
                     row.add(new Cell(info));
                 });
                body.add(row);
             });
         }
         new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).build().print();
+        System.out.println();
+        logger.info("get task list has completed!");
     }
 
-    public static List<List<String>> parseTaskList(List<String> taskList) {
+    public static List<List<String>> parseTaskList(List<Map<String, String>> taskList) {
         List<List<String>> taskListInfo = new ArrayList<>();
-        taskList.forEach(task-> {
-               String[] info = task.split("&");
-               taskListInfo.add(Arrays.asList(info));
+        taskList.forEach(task -> {
+               List<String> taskInfo = new ArrayList<>();
+               taskInfo.add(task.get(FieldName.TASK_PLAN_NAME));
+               taskInfo.add(task.get(FieldName.TASK_SUBMIT_TIME));
+               taskInfo.add(task.get(FieldName.TASK_START_TIME));
+               taskInfo.add(task.get(FieldName.TASK_COMPLETE_TIME));
+               taskInfo.add(task.get(FieldName.TASK_STATUS));
+               taskListInfo.add(taskInfo);
         });
         return taskListInfo;
     }

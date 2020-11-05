@@ -13,15 +13,14 @@ import java.io.FileNotFoundException;
  * @since 2020/10/22 18:15
  */
 public class ShellGetVersionInfo {
-    private static Logger logger = LoggerFactory.getLogger(ShellGetVersionInfo.class);
+    private static  Logger logger = LoggerFactory.getLogger(ShellGetVersionInfo.class);
     private static final String VERSION_FILE_NAME =
             System.getProperty("configPath", "version-info.properties");
-    private static Configuration configuration;
 
     public static String getVersion() {
         String version = null;
         try {
-            configuration = new Configuration(VERSION_FILE_NAME);
+            Configuration configuration = new Configuration(VERSION_FILE_NAME);
             version = configuration.getProperty("version-info");
 
         } catch (FileNotFoundException e) {

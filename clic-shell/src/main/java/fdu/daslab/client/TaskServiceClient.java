@@ -10,8 +10,7 @@ import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 与 task service连接获取信息的client
@@ -38,10 +37,10 @@ public class TaskServiceClient {
 
     /**
      * 获取所有task列表信息
-     * @return tasklist
+     * @return tasklistmap
      */
-    public List<String> getTaskList() {
-        List<String>  allTaskList = new LinkedList<>();
+    public List<Map<String, String>> getTaskList() {
+        List<Map<String, String>>  allTaskList = new ArrayList<>();
         try {
             transport.open();
             allTaskList = client.listAllTask();
@@ -69,6 +68,61 @@ public class TaskServiceClient {
             logger.error("An Error occur when CLIC shell submit plan");
             e.getStackTrace();
         }
+    }
+
+    /**
+     * 根据plan name获取task/plan的信息
+     *
+     * @param planName task name
+     * @return taskInfo
+     */
+    public Map<String, String> getTaskInfo(String planName) {
+        Map<String, String>  taskInfo = new HashMap<>();
+        try {
+            transport.open();
+            taskInfo = client.getTaskInfo(planName);
+            transport.close();
+        } catch (TException e) {
+            logger.error("An Error occur when CLIC shell get taskInfo by plan name");
+            e.getStackTrace();
+        }
+        return  taskInfo;
+    }
+    /**
+     * 根据plan name获取task下的所有stage id信息。
+     *
+     * @param planName task name
+     * @return stageIdList
+     */
+    public List<String> getStageIdOfTask(String planName) {
+        List<String>  stageIdList = new ArrayList<>();
+        try {
+            transport.open();
+            stageIdList = client.getStageIdOfTask(planName);
+            transport.close();
+        } catch (TException e) {
+            logger.error("An Error occur when CLIC shell get stageIdList by plan name");
+            e.getStackTrace();
+        }
+        return  stageIdList;
+    }
+    /**
+     * 根据stage id获取stage的信息
+     *
+     * @param stageId  stage id
+     * @return tasklistmap
+     */
+    public Map<String, String> getStageInfo(String stageId) {
+        Map<String, String>  stageInfo = new HashMap<>();
+        try {
+            transport.open();
+            stageInfo = client.getStageInfo(stageId);
+            transport.close();
+        } catch (TException e) {
+            logger.error("An Error occur when CLIC shell get stage info by stage Id");
+            e.getStackTrace();
+        }
+        return  stageInfo;
     }
 
 
