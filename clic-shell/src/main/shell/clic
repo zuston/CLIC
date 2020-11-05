@@ -7,11 +7,15 @@ bin=`cd "$bin"; pwd`
 echo ""
 function  print_usage() {
   echo "Usage:"
-  echo "clic -command"
+  echo "clic -command Args[...]"
   echo "where command is one of:"
-  echo "     -list_task           get task list"
-  echo "     -version         print the version"
-  echo "     -help               show the usage"
+  echo "     -submit_plan <planName> <planDagPath>   Submit a plan/task"
+  echo "     -list_tasks                             Get a list of all tasks"
+  echo "     -get_task <taskName>                    Get detailed information of a specified task"
+  echo "     -get_task_stages <taskName>             Get information on all stages of a task"
+  echo "     -get_stage <stageId>                    Get detailed information of a specified stage"
+  echo "     -version                                Print version information"
+  echo "     -help                                   Show the usage"
   echo ""
 }
 if [ $# = 0 ]; then
@@ -27,33 +31,37 @@ case $command in
     exit
     ;;
 esac
-#set CLASSPATH and get conf
+#set PATH
 if [ -d "$CLIC_HOME/" ]; then
   PATH=$CLIC_HOME/jars
-  config="/data/conf/master-info.config"
-  . $config
 elif [ -d "/data/jars" ]; then
-  PATH=/data/jars
-  if [ -f "/data/conf/master-info.properties" ]; then
-       config="/data/conf/master-info.config"
-       . $config
-  else
-     echo  "Error: CLIC config is not found."
-  fi
+  CLIC_HOME="/data"
+  PATH=$CLIC_HOME/jars
 else
   echo  "Error: CLIC service is not found."
 fi
+#get conf
+if [ -f "$CLIC_HOME/conf/master-info.config" ]; then
+  config="$CLIC_HOME/conf/master-info.config"
+  . $config
+else
+   echo  "Error: CLIC config is not found."
+fi
+
 #set master ip&port
 master_host="${ip}"
 master_port="${port}"
 
 
 #core command
-if [ "$command" = "-list_task" ]; then
+if [ "$command" = "-list_tasks" ]; then
   CLASS=fdu.daslab.shellservice.ShellGetTaskList
   PATH=$PATH/"clic-shell-test.jar"
 elif [ "$command" = "-version" ]; then
   CLASS=fdu.daslab.shellservice.ShellGetVersionInfo
+  PATH=$PATH/"clic-shell-test.jar"
+elif [ "$command" = "-submit_plan" ]; then
+  CLASS=fdu.daslab.shellservice.ShellSubmitPlan
   PATH=$PATH/"clic-shell-test.jar"
 else
   echo $command - invalid command

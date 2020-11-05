@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * 与 task service连接获取信息的client
  * @author Du Qinghua
  * @version 1.0
  * @since 2020/10/22 16:47
@@ -53,7 +54,7 @@ public class TaskServiceClient {
     }
 
     /**
-     * 提交任务给Clic-Master，异步
+     * 提交任务，异步
      *
      * @param planName plan名称
      * @param planDagPath plan的Dag的yaml文件的路径

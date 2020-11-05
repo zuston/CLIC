@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 
 /**
+ * 获取当前系统的版本信息
  * @author Du Qinghua
  * @version 1.0
  * @since 2020/10/22 18:15
