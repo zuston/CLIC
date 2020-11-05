@@ -117,6 +117,12 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
         return taskData;
     }
 
+    /**
+     * 查看某个task的详细信息
+     */
+    public Task getTaskByTaskName(String taskName) {
+        return taskList.get(taskName);
+    }
 
     /**
      * 查看某个stage的详细信息
@@ -124,4 +130,5 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
     public KubernetesStage getStageInfoByStageId(String stageId) {
         return clicScheduler.getStageInfo(stageId);
     }
+    
 }
