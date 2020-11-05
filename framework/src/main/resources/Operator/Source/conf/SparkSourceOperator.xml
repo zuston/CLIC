@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Operator ID="MapOperator" name="MapOperator" kind="shuffler">
+<Operator ID="SourceOperator" name="SourceOperator" kind="shuffler">
 
     <platform ID="spark">
         <language>spark</language>
@@ -7,7 +7,6 @@
         <cost>0.01</cost>
     </platform>
     <parameters>
-        <parameter name="partitionNum" data_type="integer" default="5"> </parameter>
+        <parameter kind="input" name="partitionNum" data_type="integer" default="5"> </parameter>
     </parameters>
-
 </Operator>

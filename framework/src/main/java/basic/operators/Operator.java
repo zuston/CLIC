@@ -29,17 +29,14 @@ public class Operator implements Visitable, Serializable {
     // private List<Channel> inputChannels;
     private Map<String, Param> inputParamList; // 输入参数列表
     private Map<String, Param> inputDataList; // 输入数据列表
-
-    // 记录下一跳Opt.
-    // private List<Channel> outputChannels; // 这里Channel的index应该没什么用
     private Map<String, Param> outputDataList; // 有一个result就得有一个output channel，两个变量的index要（隐性）同步
 
     /**
      * 应避免直接创建Operator，而是使用OperatorFactory的 createOperator 或 createOperatorFromFile
      *
-     * @param id
-     * @param name
-     * @param kind
+     * @param id   UUID( unique key )
+     * @param name Operator 的名字，和实例无关
+     * @param kind Operator 的类型
      */
     public Operator(String id, String name, String kind) {
         this.uuid = UUID.randomUUID();
@@ -81,7 +78,7 @@ public class Operator implements Visitable, Serializable {
         if (this.entities.containsKey(entityId)) {
             this.selectedEntity = this.entities.get(entityId);
             // 加载平台特有的参数
-            for (Param param : this.selectedEntity.params) {
+            for (Param param : this.selectedEntity.getParams()) {
                 this.addParameter(param);
             }
         } else {
@@ -101,7 +98,7 @@ public class Operator implements Visitable, Serializable {
     /**
      * 由用户直接为Opt指定具体计算平台，而不用系统择优选择
      *
-     * @param entityId
+     * @param entityId 平台Entity的ID
      * @throws FileNotFoundException
      */
     public void withTargetPlatform(String entityId) throws FileNotFoundException {
@@ -124,6 +121,10 @@ public class Operator implements Visitable, Serializable {
         return true;
     }
 
+    /**
+     * 这里的Operator只是Logical的，理论上不会存在 evaluate 方法
+     * 这里只是临时加的Evaluate函数，用于在Logical中打印Operator的信息
+     */
     public void tempDoEvaluate() {
         this.logging(this.getOperatorID() + " evaluate: {\n   inputs: ");
         for (String key : this.inputParamList.keySet()) {
@@ -148,15 +149,28 @@ public class Operator implements Visitable, Serializable {
 
     /**
      * 设置输入参数的值，用于某些参数没有默认值，需在代码中设置时使用
+     * 当在Operator默认的参数列表没有找到指定参数名时，再去其所有平台的参数列表中查找
+     * （注意：若多个平台的参数有重名时，每个重名参数的值会被更新）
      *
      * @param key   Param参数的name字段
      * @param value 参数对应的值 todo 类型泛化
+     * @throws NoSuchElementException 在默认参数列表和平台内的专用参数列表中都没找到对应的参数名时抛出
      */
     public void setParamValue(String key, String value) {
         if (this.inputParamList.containsKey(key)) {
             this.inputParamList.get(key).setValue(value);
         } else {
-            throw new NoSuchElementException(String.format("未在%s的配置文件中找到指定的参数名：%s", this.operatorName, key));
+            boolean isMatch = false;
+            for (OperatorEntity entity : this.entities.values()) { // O(N^2)的时间复杂度
+                if (entity.hasParam(key)) {
+                    entity.setParam(key, value);
+                    isMatch = true;
+                }
+            }
+            if (!isMatch) {
+                throw new NoSuchElementException(
+                        String.format("未在%s的配置文件中找到指定的参数名：%s", this.operatorName, key));
+            }
         }
     }
 
@@ -178,14 +192,6 @@ public class Operator implements Visitable, Serializable {
         this.outputDataList.put(param.getName(), param);
     }
 
-//    public List<Channel> getOutputChannel() {
-//        return outputChannels;
-//    }
-//
-//    public List<Channel> getInputChannel() {
-//        return inputChannels;
-//    }
-
     public Map<String, Param> getInputParamList() {
         return this.inputParamList;
     }
@@ -196,10 +202,6 @@ public class Operator implements Visitable, Serializable {
 
     public Map<String, Param> getOutputDataList() {
         return this.outputDataList;
-    }
-
-    public boolean isLoaded() {
-        return !this.entities.isEmpty(); // 用这个判断可能不太好，也许可以试试判断有没有configFile
     }
 
     public String getOperatorName() {
@@ -237,7 +239,6 @@ public class Operator implements Visitable, Serializable {
 //                + ", entities=" + entities
 //                + '}';
     }
-
 
     @Override
     public boolean equals(Object o) {

@@ -1,4 +1,3 @@
-
 package api;
 
 import adapters.ArgoAdapter;
@@ -13,11 +12,11 @@ import basic.visitors.PrintVisitor;
 import basic.visitors.WorkflowVisitor;
 import channel.Channel;
 import fdu.daslab.backend.executor.model.Workflow;
+import fdu.daslab.backend.executor.utils.YamlUtil;
 import org.javatuples.Pair;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultListenableGraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 
 /**
@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class PlanBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlanBuilder.class);
-    private DataQuanta headDataQuanta = null; // 其实可以有多个head
+    private List<DataQuanta> headDataQuantas = new ArrayList<>(); // 其实可以有多个head
     // private SimpleDirectedWeightedGraph<Operator, Channel> graph = null;
     private DefaultListenableGraph<Operator, Channel> graph = null;
     private Configuration configuration;
@@ -82,18 +82,31 @@ public class PlanBuilder {
         return this.addEdges(sourceDataQuanta, targetDataQuanta, keyPairs);
     }
 
+    public boolean addEdge(DataQuanta sourceDataQuanta,
+                           DataQuanta targetDataQuanta) {
+        return this.addEdge(sourceDataQuanta, targetDataQuanta, null);
+    }
+
     public DataQuanta readDataFrom(Map<String, String> params) throws Exception {
         DataQuanta dataQuanta = DataQuanta.createInstance("source", params);
-        this.headDataQuanta = dataQuanta;
-        return this.headDataQuanta; // 不需要connectTo
+        this.headDataQuantas.add(dataQuanta);
+        return dataQuanta; // 不需要connectTo
     }
 
-    public DataQuanta getHeadDataQuanta() {
-        return headDataQuanta;
+    /**
+     * 读取用户提供的数据源，可以是csv, json, txt等格式
+     * @param
+     * @return
+     * @throws Exception
+     */
+    public DataQuanta readTableFrom(Map<String, String> params) throws Exception {
+        DataQuanta dataQuanta = DataQuanta.createInstance("sqlSource", params);
+        this.headDataQuantas.add(dataQuanta);
+        return dataQuanta;
     }
 
-    public void setHeadDataQuanta(DataQuanta headDataQuanta) {
-        this.headDataQuanta = headDataQuanta;
+    public List<DataQuanta> getHeadDataQuanta() {
+        return headDataQuantas;
     }
 
     public DefaultListenableGraph<Operator, Channel> getGraph() {
@@ -117,13 +130,8 @@ public class PlanBuilder {
         this.printPlan();
         LOGGER.info("   ");
 
-//        LOGGER.info("===========【Stage 3】Visualization ===========");
-//        this.visualizePlan();
-//        LOGGER.info("   ");
-
         LOGGER.info("===========【Stage 4】execute plan ==========");
         this.executePlan();
-
     }
 
     public void printPlan() {
@@ -136,15 +144,10 @@ public class PlanBuilder {
     }
 
     public void optimizePlan() {
-        Operator start = graph.vertexSet()
-                .stream()
-                .filter(operator -> graph.inDegreeOf(operator) == 0)
-                .findAny()
-                .get();
-        BreadthFirstIterator<Operator, Channel> breadthFirstIterator = new BreadthFirstIterator<>(graph, start);
+        TopologicalOrderIterator<Operator, Channel> topologicalOrderIterator = new TopologicalOrderIterator<>(graph);
         ExecutionGenerationVisitor executionGenerationVisitor = new ExecutionGenerationVisitor();
-        while (breadthFirstIterator.hasNext()) {
-            breadthFirstIterator.next().acceptVisitor(executionGenerationVisitor);
+        while (topologicalOrderIterator.hasNext()) {
+            topologicalOrderIterator.next().acceptVisitor(executionGenerationVisitor);
         }
     }
 
@@ -228,7 +231,6 @@ public class PlanBuilder {
                 e.printStackTrace();
             }
         }
-
     }
 
     private void checkAndAddSink(Stage stage, String filePath) {
@@ -259,6 +261,13 @@ public class PlanBuilder {
             }
         }
     }
+    /**
+     * 把PlanBuilder代表的Graph转为Yaml格式的字符串
+     */
+    public void toYaml(Writer writer) { // 或许放到YamlUtil里更好？
+        Map<String, Object> yamlMap = ArgoAdapter.graph2Yaml(graph);
+        YamlUtil.writeYaml(writer, yamlMap);
+    }
 
     /**
      * 设置平台的udf的路径
@@ -269,5 +278,4 @@ public class PlanBuilder {
     public void setPlatformUdfPath(String platform, String udfPath) {
         PlatformFactory.setPlatformArgValue(platform, "--udfPath", udfPath);
     }
-
 }

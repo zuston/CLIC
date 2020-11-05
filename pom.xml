@@ -50,8 +50,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>compile</scope>
+            <version>4.13.1</version>
         </dependency>
         <!-- mockito -->
         <dependency>
@@ -62,14 +61,27 @@
         </dependency>
         <!-- mockito -->
 
+<<<<<<< HEAD
 <!--        https://mvnrepository.com/artifact/org.apache.spark/spark-sql-->
+=======
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.11</artifactId>
+            <version>2.4.5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->
+        <!-- 亲测spark-core中不包含部分spark-sql类 比如Row -->
+>>>>>>> master
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
             <version>2.4.5</version>
         </dependency>
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
     </dependencies>
 
     <modules>
