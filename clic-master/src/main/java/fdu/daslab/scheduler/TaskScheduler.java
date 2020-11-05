@@ -130,5 +130,5 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
     public KubernetesStage getStageInfoByStageId(String stageId) {
         return clicScheduler.getStageInfo(stageId);
     }
-    
+
 }

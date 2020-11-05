@@ -39,12 +39,12 @@ public class TaskServiceImpl implements TaskService.Iface {
     }
     //查看所有任务的状态
     @Override
-    public List<Map<String,String>> listAllTask(){
-        List<Map<String,String>> result = new ArrayList<>();
+    public List<Map<String, String>> listAllTask() {
+        List<Map<String, String>> result = new ArrayList<>();
         List<Task> allTaskList = taskScheduler.handlerListAllEvent();
         allTaskList.forEach(
                 task -> {
-                    Map<String,String> taskMap = new HashMap<>();
+                    Map<String, String> taskMap = new HashMap<>();
                     taskMap.put(FieldName.TASK_PLAN_NAME, task.getPlanName());
                     taskMap.put(FieldName.TASK_SUBMIT_TIME, task.getSubmitTime().toString());
                     taskMap.put(FieldName.TASK_START_TIME, task.getStartTime().toString());
@@ -58,7 +58,7 @@ public class TaskServiceImpl implements TaskService.Iface {
 
     @Override
     public Map<String, String> getTaskInfo(String planName) throws TException {
-        Map<String,String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         Task task = taskScheduler.getTaskByTaskName(planName);
         result.put(FieldName.TASK_PLAN_NAME, task.getPlanName());
         result.put(FieldName.TASK_SUBMIT_TIME, task.getSubmitTime().toString());
@@ -75,7 +75,7 @@ public class TaskServiceImpl implements TaskService.Iface {
 
     @Override
     public Map<String, String> getStageInfo(String stageId) throws TException {
-        Map<String,String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         KubernetesStage stage = taskScheduler.getStageInfoByStageId(stageId);
         result.put(FieldName.STAGE_ID, stage.getStageId());
         result.put(FieldName.STAGE_PLATFORM, stage.getPlatformName());
