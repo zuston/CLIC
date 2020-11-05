@@ -39,7 +39,8 @@ public class Configuration {
                 this.properties.put(key, value);
             }
         } catch (IOException e) {
-            throw new FileNotFoundException(String.format("无法加载默认配置文件，请检查是否存在: ", DEFAULT_CONFIGURATION_FILE_NAME));
+            throw new FileNotFoundException(String.format("无法加载默认配置文件，请检查是否存在: %s",
+                    DEFAULT_CONFIGURATION_FILE_NAME));
         } finally {
             IOUtils.closeQuietly(configStream);
         }
