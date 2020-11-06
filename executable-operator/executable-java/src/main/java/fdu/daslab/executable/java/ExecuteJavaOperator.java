@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 @Parameters(separators = "=")
 public class ExecuteJavaOperator {
     @Parameter(names = {"--stageId", "-sid"})
-    String stageId;    // stage的全局唯一标识
+    String stageId = null;    // stage的全局唯一标识
 
     @Parameter(names = {"--udfPath", "-udf"})
     String udfPath;
@@ -48,10 +48,10 @@ public class ExecuteJavaOperator {
 //    Integer thriftPort; // 本server启动的thrift端口
 
     @Parameter(names = {"--masterHost", "-mh"})
-    String masterHost; // master的thrift地址
+    String masterHost = null; // master的thrift地址
 
     @Parameter(names = {"--masterPort", "-mp"})
-    Integer masterPort; // master的thrift端口
+    Integer masterPort = null; // master的thrift端口
 
     public static void main(String[] args) throws TException {
         Logger logger = LoggerFactory.getLogger(ExecuteJavaOperator.class);

@@ -79,11 +79,11 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
             Date curStageEndTime = stage.getCompleteTime();
             if (curStageStartTime != null) {
                 startTime = (startTime == null || curStageStartTime.before(startTime))
-                        ? curStageStartTime : null;
+                        ? curStageStartTime : startTime;
             }
             if (allCompleted && curStageEndTime != null) {
                 endTime = (endTime == null || curStageEndTime.after(endTime))
-                        ? curStageEndTime : null;
+                        ? curStageEndTime : endTime;
             } else {
                 allCompleted = false;
             }

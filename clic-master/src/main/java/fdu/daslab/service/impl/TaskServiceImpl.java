@@ -47,8 +47,10 @@ public class TaskServiceImpl implements TaskService.Iface {
                     Map<String, String> taskMap = new HashMap<>();
                     taskMap.put(FieldName.TASK_PLAN_NAME, task.getPlanName());
                     taskMap.put(FieldName.TASK_SUBMIT_TIME, task.getSubmitTime().toString());
-                    taskMap.put(FieldName.TASK_START_TIME, task.getStartTime().toString());
-                    taskMap.put(FieldName.TASK_COMPLETE_TIME, task.getCompleteTime().toString());
+                    taskMap.put(FieldName.TASK_START_TIME, task.getStartTime() == null
+                            ? "not start" : task.getStartTime().toString());
+                    taskMap.put(FieldName.TASK_COMPLETE_TIME, task.getCompleteTime() == null
+                            ? "not start" : task.getCompleteTime().toString());
                     taskMap.put(FieldName.TASK_STATUS, task.getTaskStatus().toString());
                     result.add(taskMap);
                 }
