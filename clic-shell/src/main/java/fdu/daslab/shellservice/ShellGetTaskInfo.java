@@ -3,11 +3,13 @@ package fdu.daslab.shellservice;
 import fdu.daslab.client.TaskServiceClient;
 import fdu.daslab.consoletable.ConsoleTable;
 import fdu.daslab.consoletable.table.Cell;
+import fdu.daslab.consoletable.util.PrintUtil;
 import fdu.daslab.utils.FieldName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -39,22 +41,36 @@ public class ShellGetTaskInfo {
             add(new Cell(FieldName.TASK_STAGE_LIST));
         }};
         List<List<Cell>> body = new ArrayList<List<Cell>>();
+
         //如果stageinfo不为空
         if (!taskInfo.isEmpty()) {
-            List<Cell> row = new ArrayList<Cell>() { {
-                add(new Cell(taskInfo.get(FieldName.TASK_PLAN_NAME)));
-                add(new Cell(taskInfo.get(FieldName.TASK_SUBMIT_TIME)));
-                add(new Cell(taskInfo.get(FieldName.TASK_START_TIME)));
-                add(new Cell(taskInfo.get(FieldName.TASK_COMPLETE_TIME)));
-                add(new Cell(taskInfo.get(FieldName.TASK_STATUS)));
-                add(new Cell(taskInfo.get(FieldName.TASK_STAGE_NUM)));
-                add(new Cell(taskInfo.get(FieldName.TASK_STAGE_LIST)));
-            }};
-            body.add(row);
+            List<String> stageId = stringToList(taskInfo.get(FieldName.TASK_STAGE_LIST));
+            for (int i=0; i<stageId.size(); i++) {
+                List<Cell> row = new ArrayList<Cell>();
+                if (i == 0) {
+                    row.add(new Cell(PrintUtil.processOutLen(taskInfo.get(FieldName.TASK_PLAN_NAME))));
+                    row.add(new Cell(PrintUtil.processOutLen(taskInfo.get(FieldName.TASK_SUBMIT_TIME))));
+                    row.add(new Cell(PrintUtil.processOutLen(taskInfo.get(FieldName.TASK_START_TIME))));
+                    row.add(new Cell(PrintUtil.processOutLen(taskInfo.get(FieldName.TASK_COMPLETE_TIME))));
+                    row.add(new Cell(PrintUtil.processOutLen(taskInfo.get(FieldName.TASK_STATUS))));
+                    row.add(new Cell(PrintUtil.processOutLen(taskInfo.get(FieldName.TASK_STAGE_NUM))));
+                }else {
+                    for (int j=0; j<6; j++){
+                        row.add(new Cell(""));
+                    }
+                }
+                row.add(new Cell(stageId.get(i)));
+                body.add(row);
+            };
+
         }
         new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).build().print();
         System.out.println();
         logger.info("get task info has completed!");
+    }
+    private static List<String> stringToList(String strs){
+        String str[] = strs.split(",");
+        return Arrays.asList(str);
     }
 
 }

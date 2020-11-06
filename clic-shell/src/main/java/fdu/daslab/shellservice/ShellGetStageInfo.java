@@ -3,11 +3,13 @@ package fdu.daslab.shellservice;
 import fdu.daslab.client.TaskServiceClient;
 import fdu.daslab.consoletable.ConsoleTable;
 import fdu.daslab.consoletable.table.Cell;
+import fdu.daslab.consoletable.util.PrintUtil;
 import fdu.daslab.utils.FieldName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,21 +40,43 @@ public class ShellGetStageInfo {
             add(new Cell(FieldName.STAGE_CHILDREN_LIST));
         }};
         List<List<Cell>> body = new ArrayList<List<Cell>>();
+        List<String> parentList = stringToList(stageInfo.get(FieldName.STAGE_PARENT_LIST));
+        List<String> childList = stringToList(stageInfo.get(FieldName.STAGE_CHILDREN_LIST));
+        int rowLen = Math.max(parentList.size(), childList.size());
         //如果stageinfo不为空
         if (!stageInfo.isEmpty()) {
-            List<Cell> row = new ArrayList<Cell>() { {
-                add(new Cell(stageInfo.get(FieldName.STAGE_ID)));
-                add(new Cell(stageInfo.get(FieldName.STAGE_PLATFORM)));
-                add(new Cell(stageInfo.get(FieldName.STAGE_START_TIME)));
-                add(new Cell(stageInfo.get(FieldName.STAGE_COMPLETE_TIME)));
-                add(new Cell(stageInfo.get(FieldName.STAGE_RETRY_COUNT)));
-                add(new Cell(stageInfo.get(FieldName.STAGE_PARENT_LIST)));
-                add(new Cell(stageInfo.get(FieldName.STAGE_CHILDREN_LIST)));
-            }};
-            body.add(row);
+            for (int i = 0; i < rowLen; i++){
+                List<Cell> row = new ArrayList<Cell>();
+                if (i == 0){
+                    row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_ID))));
+                    row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_PLATFORM))));
+                    row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_COMPLETE_TIME))));
+                    row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_RETRY_COUNT))));
+
+                }else {
+                    for (int j = 0; j<5; j++){
+                        row.add(new Cell(""));
+                    }
+                }
+                if (i < parentList.size()){
+                    row.add(new Cell(parentList.get(i)));
+                }else {
+                    row.add(new Cell(""));
+                }
+                if (i < childList.size()){
+                    row.add(new Cell(parentList.get(i)));
+                }else {
+                    row.add(new Cell(""));
+                }
+                body.add(row);
+            }
         }
         new ConsoleTable.ConsoleTableBuilder().addHeaders(header).addRows(body).build().print();
         System.out.println();
         logger.info("get stage info has completed!");
+    }
+    private static List<String> stringToList(String strs){
+        String str[] = strs.split(",");
+        return Arrays.asList(str);
     }
 }

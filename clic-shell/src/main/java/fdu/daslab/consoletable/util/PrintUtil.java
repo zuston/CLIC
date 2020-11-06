@@ -10,7 +10,7 @@ import java.util.List;
  * @since 2020/10/22 18:14
  */
 public class PrintUtil {
-
+     private  static  int len = 35;
     /**
      * print sep line
      * @param columnWidths max width of each column
@@ -69,6 +69,22 @@ public class PrintUtil {
             result.add(sb.toString());
         }
         return result;
+    }
+
+    public static String  processOutLen(String str){
+        //默认长度为len
+        String res = processOutLen(str, len);
+        return res;
+    }
+
+    public static String  processOutLen(String str, int len){
+        String res = null;
+        if (Math.min(str.length(), len) == str.length()){
+            return str;
+        }else {
+            res = str.substring(0, len) + "...";
+        }
+        return res;
     }
 
 }

@@ -6,16 +6,16 @@ bin=`cd "$bin"; pwd`
 
 echo ""
 function  print_usage() {
-  echo "Usage:"
-  echo "clic -command Args[...]"
-  echo "where command is one of:"
-  echo "     -submit <planName> <planDagPath>        Submit a plan/task"
-  echo "     -list_tasks                             Get a list of all tasks"
-  echo "     -get_task <taskName>                    Get detailed information of a specified task"
-  echo "     -get_task_stage <taskName>              Get information on all stages of a task"
-  echo "     -get_stage <stageId>                    Get detailed information of a specified stage"
-  echo "     -version                                Print version information"
-  echo "     -help                                   Show the usage"
+  echo " Usage:"
+  echo " clic -command Args[...]"
+  echo " where command is one of:"
+  echo "      -submit <planName> <planDagPath>        Submit a plan/task"
+  echo "      -list_tasks                             Get a list of all tasks"
+  echo "      -get_task <taskName>                    Get detailed information of a specified task"
+  echo "      -get_task_stage <taskName>              Get information on all stages of a task"
+  echo "      -get_stage <stageId>                    Get detailed information of a specified stage"
+  echo "      -version                                Print version information"
+  echo "      -help                                   Show the usage"
   echo ""
 }
 if [ $# = 0 ]; then

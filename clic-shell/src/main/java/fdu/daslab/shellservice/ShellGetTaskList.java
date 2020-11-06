@@ -3,6 +3,7 @@ package fdu.daslab.shellservice;
 import fdu.daslab.client.TaskServiceClient;
 import fdu.daslab.consoletable.ConsoleTable;
 import fdu.daslab.consoletable.table.Cell;
+import fdu.daslab.consoletable.util.PrintUtil;
 import fdu.daslab.utils.FieldName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,13 @@ public class ShellGetTaskList {
             add(new Cell(FieldName.TASK_STATUS));
         }};
         List<List<Cell>> body = new ArrayList<List<Cell>>();
-        List<Cell> row = new ArrayList<Cell>();
         //如果列表不为空
         if (!allTaskList.isEmpty()) {
             List<List<String>> taskListInfo = parseTaskList(allTaskList);
             taskListInfo.forEach(task -> {
+                List<Cell> row = new ArrayList<Cell>();
                 task.forEach(info -> {
-                    row.add(new Cell(info));
+                    row.add(new Cell(PrintUtil.processOutLen(info)));
                 });
                body.add(row);
             });
@@ -51,7 +52,7 @@ public class ShellGetTaskList {
         logger.info("get task list has completed!");
     }
 
-    public static List<List<String>> parseTaskList(List<Map<String, String>> taskList) {
+    private static List<List<String>> parseTaskList(List<Map<String, String>> taskList) {
         List<List<String>> taskListInfo = new ArrayList<>();
         taskList.forEach(task -> {
                List<String> taskInfo = new ArrayList<>();

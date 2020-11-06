@@ -4,6 +4,8 @@ import fdu.daslab.client.TaskServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 /**
  * 根据 planName和planDagPath提交一个task任务
  * @author Du Qinghua
@@ -22,8 +24,21 @@ public class ShellSubmitPlan {
         String planName = args[0];
         String planDagPath = args[1];
         taskServiceClient.submitPlan(planName, planDagPath);
-
+        System.out.println(planName + " has been submitted!");
         logger.info(planName + " has been submitted!");
 
+    }
+    private static boolean checkout(String planName, String planDagPath){
+        if (planName.contains("_")){
+            System.out.println("PlanName are not allowed to contain \"_\", please check it and retry!");
+            return false;
+        }
+        File file = new File(planDagPath);
+        if (!file.exists()){
+            System.out.println("The yaml file is not found, please check and retry!");
+            return false;
+        }
+        System.out.println("Notice: If planName contains uppercase letters, it will be converted to lowercase letters");
+        return true;
     }
 }

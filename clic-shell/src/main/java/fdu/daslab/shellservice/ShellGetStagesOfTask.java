@@ -3,6 +3,7 @@ package fdu.daslab.shellservice;
 import fdu.daslab.client.TaskServiceClient;
 import fdu.daslab.consoletable.ConsoleTable;
 import fdu.daslab.consoletable.table.Cell;
+import fdu.daslab.consoletable.util.PrintUtil;
 import fdu.daslab.utils.FieldName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,6 @@ public class ShellGetStagesOfTask {
             add(new Cell(FieldName.STAGE_START_TIME));
             add(new Cell(FieldName.STAGE_COMPLETE_TIME));
             add(new Cell(FieldName.STAGE_RETRY_COUNT));
-            add(new Cell(FieldName.STAGE_PARENT_LIST));
-            add(new Cell(FieldName.STAGE_CHILDREN_LIST));
         }};
         List<List<Cell>> body = new ArrayList<List<Cell>>();
         //遍历id数组，获取所有id对应的stage信息
@@ -43,13 +42,11 @@ public class ShellGetStagesOfTask {
             //如果stageinfo不为空
             if (!stageInfo.isEmpty()) {
                 List<Cell> row = new ArrayList<Cell>() { {
-                    add(new Cell(stageInfo.get(FieldName.STAGE_ID)));
-                    add(new Cell(stageInfo.get(FieldName.STAGE_PLATFORM)));
-                    add(new Cell(stageInfo.get(FieldName.STAGE_START_TIME)));
-                    add(new Cell(stageInfo.get(FieldName.STAGE_COMPLETE_TIME)));
-                    add(new Cell(stageInfo.get(FieldName.STAGE_RETRY_COUNT)));
-                    add(new Cell(stageInfo.get(FieldName.STAGE_PARENT_LIST)));
-                    add(new Cell(stageInfo.get(FieldName.STAGE_CHILDREN_LIST)));
+                    add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_ID))));
+                    add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_PLATFORM))));
+                    add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_START_TIME))));
+                    add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_COMPLETE_TIME))));
+                    add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_RETRY_COUNT))));
                 }};
                 body.add(row);
             }
