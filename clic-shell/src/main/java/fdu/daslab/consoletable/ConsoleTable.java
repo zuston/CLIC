@@ -7,12 +7,7 @@ import fdu.daslab.consoletable.table.Header;
 import fdu.daslab.consoletable.util.StringPadUtil;
 import org.apache.commons.lang.StringUtils;
 
-import javax.activation.MailcapCommandMap;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Du Qinghua
@@ -142,52 +137,5 @@ public class ConsoleTable {
             }
             return consoleTable;
         }
-    }
-
-    public static void main(String[] args) {
-        List<String> dd = new ArrayList<>();
-        dd.add("sss");
-        dd.add("hhh");
-        System.out.println(transToString(dd));
-
-    }
-    private static String transToString(Object obj) {
-        String res = null;
-        if(obj == null){
-            res = "——";
-        }else {
-            if (obj instanceof Date){
-                res = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(obj);
-            }else if(obj instanceof List){
-                res = listToString((List<String>) obj);
-            }else {
-                res = obj.toString();
-            }
-        }
-        return res;
-    }
-
-    public static String listToString(List<String> list){
-        if(list==null){
-            return null;
-        }
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        //第一个前面不拼接","
-        for(String string :list) {
-            if(first) {
-                first=false;
-            }else{
-                result.append(",");
-            }
-            result.append(string);
-        }
-        return result.toString();
-    }
-
-
-    public static List<String> stringToList(String strs){
-        String str[] = strs.split(",");
-        return Arrays.asList(str);
     }
 }

@@ -43,6 +43,7 @@ public class ShellGetStageInfo {
         List<String> parentList = stringToList(stageInfo.get(FieldName.STAGE_PARENT_LIST));
         List<String> childList = stringToList(stageInfo.get(FieldName.STAGE_CHILDREN_LIST));
         int rowLen = Math.max(parentList.size(), childList.size());
+
         //如果stageinfo不为空
         if (!stageInfo.isEmpty()) {
             for (int i = 0; i < rowLen; i++){
@@ -50,6 +51,7 @@ public class ShellGetStageInfo {
                 if (i == 0){
                     row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_ID))));
                     row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_PLATFORM))));
+                    row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_START_TIME))));
                     row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_COMPLETE_TIME))));
                     row.add(new Cell(PrintUtil.processOutLen(stageInfo.get(FieldName.STAGE_RETRY_COUNT))));
 
@@ -64,7 +66,7 @@ public class ShellGetStageInfo {
                     row.add(new Cell(""));
                 }
                 if (i < childList.size()){
-                    row.add(new Cell(parentList.get(i)));
+                    row.add(new Cell(childList.get(i)));
                 }else {
                     row.add(new Cell(""));
                 }
@@ -76,6 +78,9 @@ public class ShellGetStageInfo {
         logger.info("get stage info has completed!");
     }
     private static List<String> stringToList(String strs){
+        if (strs.isEmpty()){
+            return new ArrayList<>();
+        }
         String str[] = strs.split(",");
         return Arrays.asList(str);
     }

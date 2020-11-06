@@ -36,7 +36,7 @@ import java.util.List;
 public class ExecuteSparkOperator {
 
     @Parameter(names = {"--stageId", "-sid"})
-    String stageId;    // stage的全局唯一标识
+    String stageId = null;    // stage的全局唯一标识
 
     @Parameter(names = {"--udfPath", "-udf"})
     String udfPath;
@@ -48,10 +48,10 @@ public class ExecuteSparkOperator {
     // Integer thriftPort; // 本server启动的thrift端口
 
     @Parameter(names = {"--masterHost", "-mh"})
-    String masterHost; // master的thrift地址
+    String masterHost = null; // master的thrift地址
 
     @Parameter(names = {"--masterPort", "-mp"})
-    Integer masterPort; // master的thrift端口
+    Integer masterPort = null; // master的thrift端口
 
     public static void main(String[] args) throws TException {
         Logger logger = LoggerFactory.getLogger(ExecuteSparkOperator.class);
@@ -108,6 +108,8 @@ public class ExecuteSparkOperator {
             logger.info("Stage(spark) ———— End The Current Spark Stage");
         } catch (Exception e) {
             e.printStackTrace();
+
+            // TODO: 尽量所有错误都直接上报给master，业务代码不要捕获其中的异常
         }
 
         // 结束stage

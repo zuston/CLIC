@@ -19,7 +19,7 @@ public class KubernetesStage {
     private String platformName; // 对应的平台
 //    private String host;    // 运行的host，需要生成后在才会存在
 //    private Integer port; // 运行的port，指的是thrift的port，用于不同服务交互
-    private Integer retryCounts; // 重试次数，重试最多三次
+    private Integer retryCounts = 0; // 重试次数，重试最多三次
     private Set<String> parentStageIds = new HashSet<>();    // 所依赖的父stage
     private Set<String> childStageIds = new HashSet<>();     // 依赖本stage的child stage
     private V1Job jobInfo; // 实际的job的定义信息
