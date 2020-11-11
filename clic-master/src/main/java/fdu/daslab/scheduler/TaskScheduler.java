@@ -131,4 +131,32 @@ public class TaskScheduler extends EventLoop<TaskEvent> {
         return clicScheduler.getStageInfo(stageId);
     }
 
+    /**
+     * 查看指定stage的输出结果（保存在文件路径下）
+     */
+    public String getOutputDataPathByStageId(String stageId) {
+        final KubernetesStage stageInfo = clicScheduler.getStageInfo(stageId);
+        if (stageInfo.getCompleteTime() == null) {
+            return null;
+        }
+        return stageInfo.getOutputDataPath();
+    }
+
+    /**
+     * 暂停指定stage的运行。
+     * 这个方法只能暂停还没有开始运行的stage，如果stage已经运行，则返回false
+     */
+    public boolean suspendStage(String stageId) {
+        return clicScheduler.suspendStageByStageId(stageId);
+    }
+
+    /**
+     * 将暂停的stage重新放到调度队列中去执行
+     */
+    public boolean continueStage(String stageId) {
+        return clicScheduler.continueStageByStageId(stageId);
+    }
+
+    /*==================================================================*/
+
 }

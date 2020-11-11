@@ -16,6 +16,7 @@ import java.util.*;
 
 /**
  * kubernetes调用需要的工具类，包含创建pod，获取指定pod对应的ip和port
+ * 以下都是垃圾代码，都是做一些适配
  *
  * @author 唐志伟
  * @version 1.0
@@ -307,14 +308,43 @@ public class KubernetesUtil {
         String containerName = (String) stageTemplate.get("template");
         String containerImage = templateToImage.get(containerName);
         // 正常的args之外，还需要添加一些辅助的参数，比如stageId等信息，这些信息需要手动地动态设置
-        String containerArgs = ((List<Map<String, String>>)
-                ((Map<String, Object>) stageTemplate.get("arguments")).get("parameters"))
-                .get(0).get("value") + " " + enrichContainerArgs(stageId);
+        String originArgs = ((List<Map<String, String>>) ((Map<String, Object>)
+                stageTemplate.get("arguments")).get("parameters")).get(0).get("value");
+        String containerArgs = originArgs + " " + enrichContainerArgs(stageId);
         V1Job job = createV1JobByDefault(stageId, containerName,
                 containerImage, containerArgs);
         stage.setJobInfo(job);
         stage.setPlatformName(containerName.substring(0, containerName.indexOf("-")));
+        // 添加输出文件的路径，需要解析physical dag
+        String dagPath = originArgs.substring(originArgs.indexOf("--dagPath=")
+                + "--dagPath=".length());
+        stage.setOutputDataPath(parsePhysicalDag(dagPath));
         resultStages.put(stageId, stage);
+    }
+
+    /**
+     * 解析physical dag的路径，并解析其中的输出路径
+     *
+     * @param dagPath physical dag的路径
+     * @return SinkOperator的路径
+     */
+    private static String parsePhysicalDag(String dagPath) {
+        Yaml yaml = new Yaml();
+        String outputPath = null;
+        try {
+            Map<String, List<Map<String, Object>>> dagYaml = yaml.load(new FileInputStream(dagPath));
+            for (Map<String, Object> operator : dagYaml.get("operators")) {
+                @SuppressWarnings("unchecked")
+                Map<String, String> params = (Map<String, String>) operator.get("params");
+                if (params.containsKey("outputPath")) {
+                    outputPath = params.get("outputPath");
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return outputPath;
     }
 
 }

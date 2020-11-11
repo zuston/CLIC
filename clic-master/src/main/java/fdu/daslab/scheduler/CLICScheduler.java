@@ -1,5 +1,6 @@
 package fdu.daslab.scheduler;
 
+import fdu.daslab.evaluator.Evaluators;
 import fdu.daslab.kubernetes.KubernetesUtil;
 import fdu.daslab.scheduler.event.SchedulerEvent;
 import fdu.daslab.scheduler.event.StageCompletedEvent;
@@ -24,6 +25,12 @@ public class CLICScheduler extends EventLoop<SchedulerEvent> {
 
     private static Logger logger = LoggerFactory.getLogger(CLICScheduler.class);
     // TODO: 以下信息暂时存储在内存中，未来可能统一收敛到etcd来存储state信息
+
+    // 不需要八村
+    // private Queue<String> waitingQueue = new LinkedList<>();
+    // 被暂停的stage
+    private Set<String> suspendStages = new HashSet<>();
+
     // 已经完成的stage
     private Set<String> completedStages = new HashSet<>();
     // 现在正在运行的stage
@@ -90,14 +97,27 @@ public class CLICScheduler extends EventLoop<SchedulerEvent> {
     }
 
     /**
-     * 根据一定的调度策略，调度该stage去执行，
+     * 根据一定的调度策略，调度该stage去执行。
+     *
+     * step1: 根据该任务，评估该任务所需要的请求资源（cpu、gpu、memory、pod numbers）和任务时间
+     *        【策略：算法进行模型估计】
+     * step2: 将所有的数据保存到 存储 中，以便底层kubernetes调度时需要
+     * step3: 直接创建pod提交到kubernetes上
+     * step4: kubernetes会底层维护一个SchedulerQueue，并根据调度队列调度指定的pod
+     *        【需要基于kubernetes的Scheduler Framework来扩展一个scheduler算法】
      *
      * @param nextStageId 即将被调度的stageId
      */
     private void schedulerNextStage(String nextStageId) {
+        // 对于暂停的stage，不执行
+        if (suspendStages.contains(nextStageId)) {
+            logger.warn(nextStageId + " is suspended! ");
+            return;
+        }
         // 根据当前的任务情况，创建job
         KubernetesStage stage = stageIdToStage.get(nextStageId);
-        // 暂时直接创建job TODO: 未来可能采用一定的调度策略，从stage的等待队列中选择合适的pod执行
+        // 不做任何处理，直接创建job，具体的调度逻辑放到k8s的scheduler framework中完成
+        Evaluators.evaluate(stage);
         KubernetesUtil.submitJobStage(stage.getJobInfo());
     }
 
@@ -106,13 +126,22 @@ public class CLICScheduler extends EventLoop<SchedulerEvent> {
         Set<String> result = new HashSet<>();
         stageIdToStage.get(stageId).getChildStageIds().forEach(childStageId -> {
             // 所有的stage都准备好了
-            if (stageIdToStage.get(childStageId).getParentStageIds().stream().allMatch(
-                    pid -> completedStages.contains(pid) || dataPreparedStages.contains(pid))) {
+            if (checkAllDependencies(childStageId)) {
                 result.add(childStageId);
             }
         });
         return result;
     }
+
+    // 判断是否该stageId的前置依赖是否都已经完成
+    private boolean checkAllDependencies(String stageId) {
+        return stageIdToStage.get(stageId)
+                .getParentStageIds()
+                .stream()
+                .allMatch(pid -> completedStages.contains(pid) || dataPreparedStages.contains(pid));
+    }
+
+    /*================以下接口是暴露给上层TaskScheduler以完成某种功能=====================*/
 
     /**
      * 处理新过来的所有的stages
@@ -141,5 +170,41 @@ public class CLICScheduler extends EventLoop<SchedulerEvent> {
     public KubernetesStage getStageInfo(String stageId) {
         return stageIdToStage.get(stageId);
     }
+
+    /**
+     * 暂停指定stage的运行，不允许对正在运行 或者 运行结束的stage 执行该操作，因为这样会影响效果
+     *
+     * @param stageId stage的唯一标识
+     * @return 暂停成功 / 失败
+     */
+    public boolean suspendStageByStageId(String stageId) {
+        if (!stageIdToStage.containsKey(stageId) || completedStages.contains(stageId)
+            || runningStages.contains(stageId) || dataPreparedStages.contains(stageId)) {
+            // 对于所有正在运行 / 已经完成的stage，不允许暂停
+            return false;
+        }
+        suspendStages.add(stageId);
+        return true;
+    }
+
+    /**
+     * 重启指定stage的运行
+     *
+     * @param stageId stage的唯一标识
+     * @return 重启成功 / 失败
+     */
+    public boolean continueStageByStageId(String stageId) {
+        if (!suspendStages.contains(stageId)) {
+            return false;
+        }
+        suspendStages.remove(stageId);
+        // 如果其依赖的stage都已经完成了或者准备好了，需要执行该stage
+        if (checkAllDependencies(stageId)) {
+            schedulerNextStage(stageId);
+        }
+        return true;
+    }
+
+    /*=================================================================*/
 
 }

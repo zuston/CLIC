@@ -24,7 +24,7 @@ public class Task {
     // 任务的状态
     private TaskStatus taskStatus = null;
 
-    // 任务包含的stage的ip
+    // 任务包含的stage的id
     private List<String> stageIdList;
 
     public Task(String planName, List<String> stageList) {

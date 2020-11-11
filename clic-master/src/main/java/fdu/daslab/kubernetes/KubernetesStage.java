@@ -26,6 +26,15 @@ public class KubernetesStage {
     private Date startTime;  // stage的开始时间
     private Date completeTime; // stage的完成时间
 
+//    // Stage的状态
+//    private StageStatus stageStatus;
+
+    // 输入的路径和输出的路径，默认会带有协议，比如file:// hdfs://
+    // TODO: 所有中间结果，不管使用什么传输方式，都需要落盘，一方面方便回溯，一方面也方便用于展示
+    // 对于高性能读取的方法，比如RDMA等，采用异步的方式，先传输，同时还需要异步地写入文件
+    // 对于hdfs，分布式存的时候是存在一个文件夹中，如何解决？
+    private String outputDataPath;
+
     public KubernetesStage(String stageId) {
         this.stageId = stageId;
     }
@@ -109,4 +118,20 @@ public class KubernetesStage {
     public void setChildStageIds(Set<String> childStageIds) {
         this.childStageIds = childStageIds;
     }
+
+    public String getOutputDataPath() {
+        return outputDataPath;
+    }
+
+    public void setOutputDataPath(String outputDataPath) {
+        this.outputDataPath = outputDataPath;
+    }
+
+//    public StageStatus getStageStatus() {
+//        return stageStatus;
+//    }
+//
+//    public void setStageStatus(StageStatus stageStatus) {
+//        this.stageStatus = stageStatus;
+//    }
 }
